@@ -22,7 +22,6 @@ public class BookMyStayApp {
         }
     }
 
-    // Room Types
     static class SingleRoom extends Room {
         SingleRoom() {
             super(1, 2000, 300);
@@ -41,9 +40,6 @@ public class BookMyStayApp {
         }
     }
 
-    /**
-     * Centralized inventory manager
-     */
     static class RoomInventory {
 
         private Map<String, Integer> roomAvailability;
@@ -64,9 +60,7 @@ public class BookMyStayApp {
         }
     }
 
-    /**
-     * Search Service (Read-only operations)
-     */
+
     static class SearchService {
 
         public void searchAvailableRooms(RoomInventory inventory, Map<String, Room> rooms) {
@@ -79,7 +73,6 @@ public class BookMyStayApp {
 
                 int count = availability.getOrDefault(roomType, 0);
 
-                // Defensive check: show only available rooms
                 if (count > 0) {
 
                     System.out.println(roomType + ":");
@@ -93,19 +86,15 @@ public class BookMyStayApp {
 
     public static void main(String[] args) {
 
-        // Room domain objects
         Map<String, Room> rooms = new HashMap<>();
         rooms.put("Single Room", new SingleRoom());
         rooms.put("Double Room", new DoubleRoom());
         rooms.put("Suite Room", new SuiteRoom());
 
-        // Inventory
         RoomInventory inventory = new RoomInventory();
 
-        // Search service
         SearchService search = new SearchService();
 
-        // Guest searches rooms
         search.searchAvailableRooms(inventory, rooms);
     }
 }
