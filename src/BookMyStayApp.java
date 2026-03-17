@@ -1,48 +1,92 @@
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
+class Service {
+    private String serviceName;
+    private double cost;
+
+    public Service(String serviceName, double cost) {
+        this.serviceName = serviceName;
+        this.cost = cost;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    @Override
+    public String toString() {
+        return serviceName + " (₹" + cost + ")";
+    }
+}
+
+class AddOnServiceManager {
+
+    private Map<String, List<Service>> reservationServices = new HashMap<>();
+
+    public void addService(String reservationId, Service service) {
+        reservationServices.putIfAbsent(reservationId, new ArrayList<>());
+        reservationServices.get(reservationId).add(service);
+        System.out.println(service.getServiceName() + " added to reservation " + reservationId);
+    }
+
+    public List<Service> getServices(String reservationId) {
+        return reservationServices.getOrDefault(reservationId, new ArrayList<>());
+    }
+
+    public double calculateTotalServiceCost(String reservationId) {
+        List<Service> services = reservationServices.get(reservationId);
+
+        if (services == null) {
+            return 0;
+        }
+
+        double total = 0;
+        for (Service s : services) {
+            total += s.getCost();
+        }
+
+        return total;
+    }
+
+    public void displayServices(String reservationId) {
+        List<Service> services = getServices(reservationId);
+
+        if (services.isEmpty()) {
+            System.out.println("No services selected for reservation " + reservationId);
+            return;
+        }
+
+        System.out.println("\nServices for Reservation " + reservationId + ":");
+
+        for (Service s : services) {
+            System.out.println("- " + s);
+        }
+
+        System.out.println("Total Add-On Cost: ₹" + calculateTotalServiceCost(reservationId));
+    }
+}
+
+// Main class
 public class BookMyStayApp {
-
-    static class Reservation {
-        String guestName;
-        String roomType;
-
-        Reservation(String guestName, String roomType) {
-            this.guestName = guestName;
-            this.roomType = roomType;
-        }
-    }
-
-    static class BookingRequestQueue {
-
-        private Queue<Reservation> queue = new LinkedList<>();
-
-        public void addRequest(String guestName, String roomType) {
-            queue.add(new Reservation(guestName, roomType));
-        }
-
-        public void processRequests() {
-
-            System.out.println("Booking Request Queue");
-
-            while (!queue.isEmpty()) {
-                Reservation r = queue.poll();
-                System.out.println(
-                        "Processing booking for Guest: " + r.guestName +
-                                ", Room Type: " + r.roomType
-                );
-            }
-        }
-    }
 
     public static void main(String[] args) {
 
-        BookingRequestQueue bookingQueue = new BookingRequestQueue();
+        AddOnServiceManager manager = new AddOnServiceManager();
 
-        bookingQueue.addRequest("Abhi", "Single");
-        bookingQueue.addRequest("Subha", "Double");
-        bookingQueue.addRequest("Vanmathi", "Suite");
+        String reservationId = "RES101";
 
-        bookingQueue.processRequests();
+        Service breakfast = new Service("Breakfast Package", 500);
+        Service airportPickup = new Service("Airport Pickup", 1200);
+        Service spa = new Service("Spa Access", 2000);
+
+        manager.addService(reservationId, breakfast);
+        manager.addService(reservationId, airportPickup);
+        manager.addService(reservationId, spa);
+
+        manager.displayServices(reservationId);
     }
 }
